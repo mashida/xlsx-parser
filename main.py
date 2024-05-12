@@ -1,6 +1,5 @@
 import shutil
 
-import openpyxl
 import pandas as pd
 import os
 import zipfile
@@ -71,6 +70,7 @@ def remove_folder_with_contents(folder_path):
 def main():
     # Get the directory of the current script
     script_directory = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(script_directory)
 
     # Construct the path to the input.xlsx file
     input_file_path = os.path.join(script_directory, 'input.xlsx')
