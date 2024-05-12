@@ -1,11 +1,30 @@
 import shutil
+import sys
 
 import pandas as pd
 import os
 import zipfile
+import logging
+
+logger = logging.getLogger(__name__)
+LOGGING_LEVEL = logging.DEBUG
+logger.setLevel(LOGGING_LEVEL)
 
 
-def transform_string(input_string):
+def get_script_folder():
+    # path of main .py or .exe when converted with pyinstaller
+    if getattr(sys, 'frozen', False):
+        script_path = os.path.dirname(sys.executable)
+    else:
+        script_path = os.path.dirname(
+            os.path.abspath(sys.modules['__main__'].__file__)
+        )
+    return script_path
+
+
+def transform_string(input_string: str | int):
+    if isinstance(input_string, int):
+        input_string = str(input_string)
     # Step 1: Remove the quotation marks
     cleaned_string = input_string.replace('«', '').replace('»', '')
     cleaned_string = cleaned_string.replace('"', '')
@@ -31,7 +50,7 @@ def create_excel_files(data, output_dir):
         os.makedirs(output_dir)
 
     # Group the data by 'Клиент' and create a DataFrame for each group
-    clients = data['Клиент'].drop_duplicates()
+    clients = data['№ плател.'].drop_duplicates()
 
     # Iterate over each group (DataFrame)
     for client in clients:
@@ -40,7 +59,16 @@ def create_excel_files(data, output_dir):
         file_path = os.path.join(output_dir, file_name)
 
         # Write the group data to the Excel file
-        data[data['Клиент'] == client].to_excel(file_path, index=False)
+        data.loc[data['№ плател.'] == client,
+        [
+            'Накладная',
+            'Дата',
+            'Город отправления',
+            'Город получения',
+            'Вес,кг',
+        ]
+        ].to_excel(file_path,
+                   index=False)
 
 
 def zip_excel_files(output_dir, zip_file_name):
@@ -69,11 +97,13 @@ def remove_folder_with_contents(folder_path):
 
 def main():
     # Get the directory of the current script
-    script_directory = os.path.dirname(os.path.abspath(__file__))
+    script_directory = get_script_folder()
+    print(f"{script_directory=}")
     os.chdir(script_directory)
 
     # Construct the path to the input.xlsx file
     input_file_path = os.path.join(script_directory, 'input.xlsx')
+    print(f"{input_file_path=}")
     output_dir = 'output'
     zip_file_name = 'output.zip'
     sheet_name = 'Накладные'
