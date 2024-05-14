@@ -242,8 +242,7 @@ def create_excel_files(data, output_dir):
         file_path = os.path.join(output_dir, file_name)
 
         # Write the group data to the Excel file
-        filtered_data = data.loc[data['Клиент'] == client,
-        [
+        filtered_data = data.loc[data['Клиент'] == client, [
             'Накладная',
             'Дата',
             'Город отправления',
