@@ -1,1 +1,1 @@
-When all dependencies installed just run `pyinstaller --onefile xlsx-parser.py`
+When all dependencies installed just run `pyinstaller --onefile main.py --name xlsx-parser`
