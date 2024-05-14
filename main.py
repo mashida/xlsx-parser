@@ -251,6 +251,7 @@ def create_excel_files(data, output_dir):
             'Об. вес,кг'
         ]]
 
+        filtered_data = filtered_data.sort_values(by='Дата')
         company_name = data.loc[data['Клиент'] == client, 'Клиент'].values[0]
         company_id = data.loc[data['Клиент'] == client, '№ плател.'].values[0]
 
