@@ -182,12 +182,19 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     merged_cell.alignment = Alignment(horizontal='center', vertical='center')
     merged_cell.border = thick_top_left_border
 
+    # merged cell borders in column E and F are not shown in Microsoft Office Excel
+    # but do show in LibreOffice Calc, I think that it happens because of a merge cell coordinates
+    # so border should be drawn explicitly in that columns
+
+    ws[f'E{current_section_top_row}'].border = thick_top_border
+    ws[f'F{current_section_top_row}'].border = thick_top_border
+
     ws[f'G{current_section_top_row}'].value = f""
     ws[f'G{current_section_top_row}'].font = Font(name='Arial Cyr', size=9)
     ws[f'G{current_section_top_row}'].alignment = Alignment(horizontal='right', vertical='center')
     ws[f'G{current_section_top_row}'].border = thick_top_border
 
-    ws[f'H{current_section_top_row}'].value = f"==SUM(H6:H{len(data_to_write) + 5})"
+    ws[f'H{current_section_top_row}'].value = f"=SUM(H6:H{len(data_to_write) + 5})"
     ws[f'H{current_section_top_row}'].font = Font(name='Arial Cyr', size=11)
     ws[f'H{current_section_top_row}'].alignment = Alignment(horizontal='center', vertical='center')
     ws[f'H{current_section_top_row}'].border = thick_top_right_border
@@ -200,6 +207,8 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     merged_cell.font = Font(name='Arial Cyr', size=11)
     merged_cell.alignment = Alignment(horizontal='center', vertical='center')
     merged_cell.border = thick_left_border
+    ws[f'E{current_section_top_row}'].border = thin_border
+    ws[f'F{current_section_top_row}'].border = thin_border
     ws[f'G{current_section_top_row}'].border = thin_border
     ws[f'H{current_section_top_row}'].border = thick_right_border
 
@@ -211,6 +220,8 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     merged_cell.font = Font(name='Arial Cyr', size=11)
     merged_cell.alignment = Alignment(horizontal='center', vertical='center')
     merged_cell.border = thick_bottom_left_border
+    ws[f'E{current_section_top_row}'].border = thick_bottom_border
+    ws[f'F{current_section_top_row}'].border = thick_bottom_border
     ws[f'G{current_section_top_row}'].border = thick_bottom_border
     ws[f'H{current_section_top_row}'].border = thick_bottom_right_border
 
@@ -221,6 +232,10 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     merged_cell.value = "Тарифы представлены в рублях с учётом НДС."
     merged_cell.font = Font(name='Arial Cyr', size=11)
     merged_cell.alignment = Alignment(horizontal='center', vertical='center')
+
+    # Set the print area to a specific range
+    ws.print_area = f"A1:H{current_section_top_row}"
+
     # Save the workbook
     wb.save(file_path)
 
