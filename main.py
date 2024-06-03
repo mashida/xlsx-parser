@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 LOGGING_LEVEL = logging.DEBUG
 logger.setLevel(LOGGING_LEVEL)
 
+FORMAT_CURRENCY_RUB = "0.00 ₽"
+
 
 def get_script_folder():
     # path of main .py or .exe when converted with pyinstaller
@@ -122,6 +124,8 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     # Write the data to the Excel file, starting from row 6 to avoid overwriting the headers
     for i, row in enumerate(data_to_write, start=current_section_top_row):
         print(f"Row {i}: {row}")  # Adjust the print statement as needed
+        _cell = ws.cell(row=i, column=8)
+        _cell.number_format = FORMAT_CURRENCY_RUB
         for j, cell in enumerate(row, start=1):
             ws.cell(row=i, column=j, value=cell)
             # Apply border to the first and last row, and first and last column
@@ -194,10 +198,11 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     ws[f'G{current_section_top_row}'].alignment = Alignment(horizontal='right', vertical='center')
     ws[f'G{current_section_top_row}'].border = thick_top_border
 
-    ws[f'H{current_section_top_row}'].value = f"=SUM(H6:H{len(data_to_write) + 5})"
+    ws[f'H{current_section_top_row}'].value = f"=SUM(H7:H{len(data_to_write) + 6})"
     ws[f'H{current_section_top_row}'].font = Font(name='Arial Cyr', size=11)
     ws[f'H{current_section_top_row}'].alignment = Alignment(horizontal='center', vertical='center')
     ws[f'H{current_section_top_row}'].border = thick_top_right_border
+    ws[f'H{current_section_top_row}'].number_format = FORMAT_CURRENCY_RUB
 
     # Totals Row #2 - Merge cells from D to F and add text
     current_section_top_row += 1
@@ -211,6 +216,7 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     ws[f'F{current_section_top_row}'].border = thin_border
     ws[f'G{current_section_top_row}'].border = thin_border
     ws[f'H{current_section_top_row}'].border = thick_right_border
+    ws[f'H{current_section_top_row}'].number_format = FORMAT_CURRENCY_RUB
 
     # Totals Row #3 - Merge cells from D to F and add text
     current_section_top_row += 1
@@ -224,6 +230,7 @@ def write_to_excel(df: pd.DataFrame, company_name: str, company_id: str, file_pa
     ws[f'F{current_section_top_row}'].border = thick_bottom_border
     ws[f'G{current_section_top_row}'].border = thick_bottom_border
     ws[f'H{current_section_top_row}'].border = thick_bottom_right_border
+    ws[f'H{current_section_top_row}'].number_format = FORMAT_CURRENCY_RUB
 
     # save fifth part - NDS row
     current_section_top_row += 6
